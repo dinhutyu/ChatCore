@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Простой чат</title>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    #messages { max-height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+    .msg { margin-bottom: 5px; }
+  </style>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-database-compat.js"></script>
+</head>
+<body>
+
+  <h2>💬 Простой Чат</h2>
+  <div id="messages"></div>
+
+  <input id="name" placeholder="Имя" />
+  <input id="text" placeholder="Сообщение" />
+  <button onclick="sendMessage()">Отправить</button>
+
+  <script>
+    // ТВОИ НАСТРОЙКИ ИЗ FIREBASE:
+  const firebaseConfig = {
+  apiKey: "AIzaSyDmbD0VQW01sKMVGYPYGz9Ar5EC4PTEo0Q",
+  authDomain: "chat-ce37d.firebaseapp.com",
+  databaseURL: "https://chat-ce37d-default-rtdb.firebaseio.com",
+  projectId: "chat-ce37d",
+  storageBucket: "chat-ce37d.firebasestorage.app",
+  messagingSenderId: "267022732462",
+  appId: "1:267022732462:web:417d28ba88a84a30e8b13f",
+  measurementId: "G-ND5HS0NHEY"
+};
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    function sendMessage() {
+      const name = document.getElementById('name').value;
+      const text = document.getElementById('text').value;
+      if (name && text) {
+        db.ref("messages").push({ name, text });
+        document.getElementById('text').value = "";
+      }
+    }
+
+    db.ref("messages").on("child_added", (data) => {
+      const msg = data.val();
+      const msgEl = document.createElement("div");
+      msgEl.className = "msg";
+      msgEl.textContent = `${msg.name}: ${msg.text}`;
+      document.getElementById("messages").appendChild(msgEl);
+    });
+  </script>
+
+</body>
+</html>
